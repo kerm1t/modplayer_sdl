@@ -69,12 +69,16 @@ int main(int argc, char **argv)
       return -1;
     }
  
- //   char modfile[255] = "C:\\GIT-copy\\modplayer\\star_control2,tune1.mod";
+// endless mod files : http://artscene.textfiles.com/music/mods/
+// more mod files ;-)  https://modsamplemaster.thegang.nu/
+    // sadly tristar boulder demo music is in beathoven synthesizer format
+//    char modfile[255] = "C:\\GIT-copy\\modplayer\\star control2,tune4.mod"; // 1,4,5,6
+//    char modfile[255] = "C:\\GIT-copy\\modplayer\\echoing.mod"; // 4mats-madness,echoing,metalsynth,rsectro
     char modfile[255] = "C:\\GIT-copy\\Mirage_Demo_1998\\new-vampire.mod";
-// tut's ned    char modfile[255] = "C:\\GIT-copy\\Mirage_Demo_1998\\STK.housetrain";
 //    char modfile[255] = "C:\\GIT-copy\\Mirage_Demo_1998\\android.mod";
-    //    char modfile[255] = "C:\\GIT-copy\\Mirage_Demo_1998\\wisdom.mod";
-    //    char modfile[255] = "C:\\GIT\\star_control2_tune1.mod";
+//    char modfile[255] = "C:\\GIT-copy\\Mirage_Demo_1998\\wisdom.mod";
+//    char modfile[255] = "C:\\GIT-copy\\modplayer\\pocketmod\\songs\\stardstm.mod"; // bananasplit,chill,elysium,king,nemesis,overture,spacedeb,stardstm,sundance,sundown,supernova
+//    char modfile[255] = "C:\\GIT-copy\\modplayer\\romeoknight\\acid-beat1.mod"; // 1989-a number,4aces-high,acid-beat1--,joy-ride,knucklebuster,rsi-hard,rsi-intro
 
     /* Read the MOD file into a heap block */
     if (!(mod_file = SDL_RWFromFile(modfile, "rb"))) {
@@ -131,7 +135,7 @@ int main(int argc, char **argv)
         int chan_sample[4] = {static_cast<int>(context.channels[0].sample),static_cast<int>(context.channels[1].sample),
                               static_cast<int>(context.channels[2].sample),static_cast<int>(context.channels[3].sample) };
 
-        std::string samplea = std::to_string(chan_sample[0]) + " " + std::to_string(context.samples[chan_sample[0]].length);
+        std::string samplea = std::to_string(chan_sample[0]);// +" " + std::to_string(context.samples[chan_sample[0]].length);
         std::string sampleb = std::to_string(static_cast<int>(context.channels[1].sample));
         std::string samplec = std::to_string(static_cast<int>(context.channels[2].sample));
         std::string sampled = std::to_string(static_cast<int>(context.channels[3].sample));
@@ -164,10 +168,10 @@ int main(int argc, char **argv)
 //        SDL_RenderDrawLine(rndr, 10, 10, 50, 25); // Draw a line
         doText(rndr, 20, 10, "nice, our sweet new mod player ...");
 //          doText(rndr, 20, 20, "playing mod : " + std::string(reinterpret_cast<char*>(context.source)));
-        doText(rndr, 20, 20, "playing " + std::string(modfile));
+        doText(rndr, 20, 30, "playing " + std::string(modfile));
         char buf[100];
         sprintf(buf,"[%d:%02d] ", seconds / 60, seconds % 60);
-        doText(rndr, 20, 30, buf);
+        doText(rndr, 20, 50, buf);
         
         if (chan_pos[0] < 0.01f) samplea = "-";
         if (chan_pos[1] < 0.01f) sampleb = "-";
@@ -175,10 +179,10 @@ int main(int argc, char **argv)
         if (chan_pos[3] < 0.01f) sampled = "-";
 
         SDL_Rect r = { 20, 100, 180, 100 };
-        SDL_SetRenderDrawColor(rndr, 0x00, 0x6F, 0x00, 0x6F);
+        SDL_SetRenderDrawColor(rndr, 0x00, 0x8F, 0x00, 0x6F);
         if (chan_pos[0] > 0.0f) SDL_RenderFillRect(rndr, &r);
         r = { 210, 100, 180, 100 };
-        SDL_SetRenderDrawColor(rndr, 0x00, 0x00, 0x6F, 0xFF);
+        SDL_SetRenderDrawColor(rndr, 0x00, 0x00, 0xCF, 0xFF);
         if (chan_pos[1] > 0.0f) SDL_RenderFillRect(rndr, &r);
         r = { 400, 100, 180, 100 };
         SDL_SetRenderDrawColor(rndr, 0x00, 0x6F, 0xFF, 0x00);

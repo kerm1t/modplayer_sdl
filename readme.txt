@@ -25,11 +25,14 @@ cmake --build .
 
 2do:
 - 4 scopes like in fasttrackerII
-- graphics output via (a) GDI or (b) SDL
++ graphics output via (a) GDI or >>> (b) SDL <<<
 - drag & drop mod files onto window
 - merge text.cpp and .h into single header file
 - make textX2 and textX4 to output for seniors :-)
 - rename text.hpp to text_sdl.hpp? or use #define to differentiate between SDL and tinyPTC :-)
+- tonhoehe, um (a) boxen zu faerben (b) spectrum analyzer zu zeichnen
+- play a sample, e.g. when hitting keys 1-10
+- stop playback, e.g. upon LMB click
 
 problems
 --------
