@@ -105,9 +105,43 @@ void doTextCol(SDL_Renderer *rndr, int x, int y, std::string stri, short r, shor
 				}
 }
 
+// >> public
+// Parameter sollten noch durch c++ string ersetzt werden
+//void doText(int x, int y, char *str, int strLen);
+void doTextCol_2X(SDL_Renderer *rndr, int x, int y, std::string stri, short r, short g, short b) {
+  int i, j, p;
+  int pixel_x, pixel_y;
+
+  //	char *str = "made by andre barata, 2003";
+  //	int strLen = 26;
+
+  char *str = (char*)stri.c_str();
+  int strLen = stri.length();
+
+  for (i = 0; i < strLen; i++)
+    for (j = 0; j < tCharNr; j++)
+      if (str[i] == tString[j])
+        for (p = 0; p < tChar[j].plotNr; p++)
+        {
+          // gui_Window - Fenster!!
+          pixel_x = x + tChar[j].plot[p][0] + (i * 12); // 12
+          pixel_y = y + tChar[j].plot[p][1]*2; // stretch y
+          // den Text hier in grau ausdrucken, damit er sich von der Grafik abhebt
+//					if (pixel_x>clip_x0 && pixel_x<clip_x1 && pixel_y>clip_y0 && pixel_y<clip_y1)
+//						pset(pixel_x, pixel_y , r,g,b);
+          SDL_RenderDrawPoint(rndr, pixel_x, pixel_y);
+          SDL_RenderDrawPoint(rndr, pixel_x+1, pixel_y);
+//          SDL_RenderDrawPoint(rndr, pixel_x, pixel_y+1);
+//          SDL_RenderDrawPoint(rndr, pixel_x + 1, pixel_y+1);
+          
+//          SDL_RenderDrawPoint(rndr, pixel_x+2, pixel_y);
+//          SDL_RenderDrawPoint(rndr, pixel_x+2, pixel_y + 1);
+        }
+}
+
 void doText(SDL_Renderer *rndr, int x, int y, std::string stri) {
 	short r,g,b;
 	r = g = b = 255;
-	doTextCol(rndr, x, y, stri, r, g, b);
+	doTextCol_2X(rndr, x, y, stri, r, g, b);
 //	doTextCol(x, y, stri, 155, 155, 155);
 }
