@@ -128,17 +128,22 @@ int main(int argc, char **argv)
 
     loadText(800, 600);		// Bildschirm-Text (BTX) initialisieren
     while (!quit) {
-      int chan_sample[4] = {static_cast<int>(context.channels[0].sample),static_cast<int>(context.channels[1].sample),
-                            static_cast<int>(context.channels[2].sample),static_cast<int>(context.channels[3].sample) };
-  
+        int chan_sample[4] = {static_cast<int>(context.channels[0].sample),static_cast<int>(context.channels[1].sample),
+                              static_cast<int>(context.channels[2].sample),static_cast<int>(context.channels[3].sample) };
+
         std::string samplea = std::to_string(chan_sample[0]) + " " + std::to_string(context.samples[chan_sample[0]].length);
         std::string sampleb = std::to_string(static_cast<int>(context.channels[1].sample));
         std::string samplec = std::to_string(static_cast<int>(context.channels[2].sample));
         std::string sampled = std::to_string(static_cast<int>(context.channels[3].sample));
 
+        int chan_vol[4] = { static_cast<int>(context.channels[0].volume),static_cast<int>(context.channels[1].volume),
+                            static_cast<int>(context.channels[2].volume),static_cast<int>(context.channels[3].volume) };
+        float chan_pos[4] = { static_cast<float>(context.channels[0].position),static_cast<float>(context.channels[1].position),
+                            static_cast<float>(context.channels[2].position),static_cast<float>(context.channels[3].position) };
+
         /* Print some information during playback */
-/*        int seconds = (SDL_GetTicks() - start_time) / 1000;
-        printf("\rPlaying '%s' ", modfile);
+        int seconds = (SDL_GetTicks() - start_time) / 1000;
+/*        printf("\rPlaying '%s' ", modfile);
         printf("[%d:%02d] ", seconds / 60, seconds % 60);
 *///        printf("Press Ctrl + C to stop");
 //        fflush(stdout);
@@ -158,25 +163,36 @@ int main(int argc, char **argv)
 //        SDL_RenderDrawPoint(rndr, pointLocationx, pointLocationy);
 //        SDL_RenderDrawLine(rndr, 10, 10, 50, 25); // Draw a line
         doText(rndr, 20, 10, "nice, our sweet new mod player ...");
-//        if (context)
-        {
-          doText(rndr, 20, 20, "playing mod : " + std::string(reinterpret_cast<char*>(context.source)));
-          doText(rndr, 20+90, 150, samplea);
-          doText(rndr, 210+90, 150, sampleb);
-          doText(rndr, 400+90, 150, samplec);
-          doText(rndr, 590+90, 150, sampled);
-        }
+//          doText(rndr, 20, 20, "playing mod : " + std::string(reinterpret_cast<char*>(context.source)));
+        doText(rndr, 20, 20, "playing " + std::string(modfile));
+        char buf[100];
+        sprintf(buf,"[%d:%02d] ", seconds / 60, seconds % 60);
+        doText(rndr, 20, 30, buf);
+        
+        if (chan_pos[0] < 0.01f) samplea = "-";
+        if (chan_pos[1] < 0.01f) sampleb = "-";
+        if (chan_pos[2] < 0.01f) samplec = "-";
+        if (chan_pos[3] < 0.01f) sampled = "-";
+
         SDL_Rect r = { 20, 100, 180, 100 };
-        SDL_RenderDrawRect(rndr, &r);
+        SDL_SetRenderDrawColor(rndr, 0x00, 0x6F, 0x00, 0x6F);
+        if (chan_pos[0] > 0.0f) SDL_RenderFillRect(rndr, &r);
         r = { 210, 100, 180, 100 };
-        SDL_RenderDrawRect(rndr, &r);
+        SDL_SetRenderDrawColor(rndr, 0x00, 0x00, 0x6F, 0xFF);
+        if (chan_pos[1] > 0.0f) SDL_RenderFillRect(rndr, &r);
         r = { 400, 100, 180, 100 };
-        SDL_RenderDrawRect(rndr, &r);
+        SDL_SetRenderDrawColor(rndr, 0x00, 0x6F, 0xFF, 0x00);
+        if (chan_pos[2] > 0.0f) SDL_RenderFillRect(rndr, &r);
         r = { 590, 100, 180, 100 };
-        SDL_RenderDrawRect(rndr, &r);
+        SDL_SetRenderDrawColor(rndr, 0x00, 0x6F, 0x6F, 0xFF);
+        if (chan_pos[3] > 0.0f) SDL_RenderFillRect(rndr, &r);
         // Set the color to what was before
         SDL_SetRenderDrawColor(rndr, 0x00, 0x00, 0x00, 0xFF);
         // .. you could do some other drawing here
+        doText(rndr, 20 + 90, 150, samplea);
+        doText(rndr, 210 + 90, 150, sampleb);
+        doText(rndr, 400 + 90, 150, samplec);
+        doText(rndr, 590 + 90, 150, sampled);
         // And now we present everything we draw after the clear.
         SDL_RenderPresent(rndr);
     }
