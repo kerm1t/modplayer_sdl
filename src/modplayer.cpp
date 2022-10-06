@@ -37,6 +37,32 @@ static void audio_callback(void *userdata, Uint8 *buffer, int bytes)
   }
 }
 
+int load_mod(const char* modfile, const SDL_AudioSpec& format, char *mod_data, size_t& mod_size, pocketmod_context& context)
+{
+  SDL_RWops *mod_file;
+
+  // Read the MOD file into a heap block
+  if (!(mod_file = SDL_RWFromFile(modfile, "rb"))) {
+    printf("error: can't open '%s' for reading\n", modfile);
+    return -1;
+  }
+  else if (!(mod_data = (char *)SDL_malloc(mod_size = SDL_RWsize(mod_file)))) {
+    printf("error: can't allocate memory for '%s'\n", modfile);
+    return -1;
+  }
+  else if (!SDL_RWread(mod_file, mod_data, mod_size, 1)) {
+    printf("error: can't read file '%s'\n", modfile);
+    return -1;
+  }
+  SDL_RWclose(mod_file);
+
+  // Initialize the renderer
+  if (!pocketmod_init(&context, mod_data, mod_size, format.freq)) {
+    printf("error: '%s' is not a valid MOD file\n", modfile);
+    return -1;
+  }
+
+}
 
 int main(int argc, char **argv)
 {
@@ -47,7 +73,8 @@ int main(int argc, char **argv)
     SDL_AudioSpec format;
     SDL_AudioDeviceID device;
     SDL_RWops *mod_file;
-    char *mod_data, *slash;
+    char *mod_data = NULL;
+    char *slash;
     size_t mod_size;
 
     /* Initialize SDL */
@@ -72,34 +99,11 @@ int main(int argc, char **argv)
 // endless mod files : http://artscene.textfiles.com/music/mods/
 // more mod files ;-)  https://modsamplemaster.thegang.nu/
     // sadly tristar boulder demo music is in beathoven synthesizer format
-//    char modfile[255] = "C:\\GIT-copy\\modplayer\\star control2,tune4.mod"; // 1,4,5,6
-//    char modfile[255] = "C:\\GIT-copy\\modplayer\\echoing.mod"; // 4mats-madness,echoing,metalsynth,rsectro
-    char modfile[255] = "C:\\GIT-copy\\Mirage_Demo_1998\\new-vampire.mod";
-//    char modfile[255] = "C:\\GIT-copy\\Mirage_Demo_1998\\android.mod";
-//    char modfile[255] = "C:\\GIT-copy\\Mirage_Demo_1998\\wisdom.mod";
-//    char modfile[255] = "C:\\GIT-copy\\modplayer\\pocketmod\\songs\\stardstm.mod"; // bananasplit,chill,elysium,king,nemesis,overture,spacedeb,stardstm,sundance,sundown,supernova
-//    char modfile[255] = "C:\\GIT-copy\\modplayer\\romeoknight\\acid-beat1.mod"; // 1989-a number,4aces-high,acid-beat1--,joy-ride,knucklebuster,rsi-hard,rsi-intro
+    char* modfile;
+    char modfile1[255] = "C:\\GIT-copy\\Mirage_Demo_1998\\new-vampire.mod";
+    modfile = modfile1;
 
-    /* Read the MOD file into a heap block */
-    if (!(mod_file = SDL_RWFromFile(modfile, "rb"))) {
-      printf("error: can't open '%s' for reading\n", modfile);
-      return -1;
-    }
-    else if (!(mod_data = (char *)SDL_malloc(mod_size = SDL_RWsize(mod_file)))) {
-      printf("error: can't allocate memory for '%s'\n", modfile);
-      return -1;
-    }
-    else if (!SDL_RWread(mod_file, mod_data, mod_size, 1)) {
-      printf("error: can't read file '%s'\n", modfile);
-      return -1;
-    }
-    SDL_RWclose(mod_file);
-
-    /* Initialize the renderer */
-    if (!pocketmod_init(&context, mod_data, mod_size, format.freq)) {
-      printf("error: '%s' is not a valid MOD file\n", modfile);
-      return -1;
-    }
+    load_mod(modfile, format, mod_data, mod_size, context);
 
     /* Strip the directory part from the source file's path 
     while ((slash = strpbrk(modfile, "/\\"))) {
@@ -113,7 +117,7 @@ int main(int argc, char **argv)
 
     const int windowHeight = 600;
     const int windowWidth = 800;
-    SDL_Window *window = SDL_CreateWindow("modplayer 2022",
+    SDL_Window *window = SDL_CreateWindow("modplayer 2022 - kerm1t / mirage",
       SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth,
       windowHeight, SDL_WINDOW_SHOWN);
     if (window == NULL) {
@@ -123,9 +127,6 @@ int main(int argc, char **argv)
     
     // We create a renderer with hardware acceleration, we also present according with the vertical sync refresh.
     SDL_Renderer *rndr = SDL_CreateRenderer(window, 0, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-
-//    const int pointLocationx = windowWidth / 2;
-//    const int pointLocationy = windowHeight / 2;
 
     bool quit = false;
     SDL_Event event;
@@ -153,7 +154,6 @@ int main(int argc, char **argv)
 //        fflush(stdout);
 //        SDL_Delay(500);
 
-        char* dropped_filedir; 
 
         while (SDL_PollEvent(&event)) {
           switch (event.type) {
@@ -164,16 +164,17 @@ int main(int argc, char **argv)
             }
 
             case (SDL_DROPFILE): {      // https://wiki.libsdl.org/SDL_DropEvent
+              char* dropped_filedir;
               dropped_filedir = event.drop.file;
-              // Shows directory of dropped file
-              SDL_ShowSimpleMessageBox(
-                SDL_MESSAGEBOX_INFORMATION,
-                "File dropped on window",
-                dropped_filedir,
-                window
-              );
-              SDL_free(dropped_filedir);    // Free dropped_filedir memory
+              modfile = dropped_filedir;
+
               SDL_PauseAudioDevice(device, 1);
+              SDL_free(mod_data);
+              load_mod(modfile, format, mod_data, mod_size, context);
+              SDL_PauseAudioDevice(device, 0);
+              start_time = SDL_GetTicks();
+
+              SDL_free(dropped_filedir);    // Free dropped_filedir memory
               break;
             }
           }
@@ -186,12 +187,12 @@ int main(int argc, char **argv)
         // Now we can draw our point
 //        SDL_RenderDrawPoint(rndr, pointLocationx, pointLocationy);
 //        SDL_RenderDrawLine(rndr, 10, 10, 50, 25); // Draw a line
-        doText(rndr, 20, 10, "nice, our sweet new mod player ...");
+        doText(rndr, 20, 20, "nice, our sweet new mod player ...");
 //          doText(rndr, 20, 20, "playing mod : " + std::string(reinterpret_cast<char*>(context.source)));
-        doText(rndr, 20, 30, "playing " + std::string(modfile));
+        doText(rndr, 20, 40, "playing " + std::string(modfile));
         char buf[100];
         sprintf(buf,"[%d:%02d] ", seconds / 60, seconds % 60);
-        doText(rndr, 20, 50, buf);
+        doText(rndr, 20, 60, buf);
         
         if (chan_pos[0] < 0.01f) samplea = "-";
         if (chan_pos[1] < 0.01f) sampleb = "-";

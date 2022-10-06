@@ -30,7 +30,7 @@ features:
 2do:
 - 4 scopes like in fasttrackerII
 + graphics output via (a) GDI or >>> (b) SDL <<<
-- drag & drop mod files onto window
++ drag & drop mod files onto window
 - merge text.cpp and .h into single header file
 - make textX2 and textX4 to output for seniors :-)
 - rename text.hpp to text_sdl.hpp? or use #define to differentiate between SDL and tinyPTC :-)
@@ -44,3 +44,4 @@ problems
 --------
 (1) error LNK2019: unresolved external symbol SDL_main referenced in function main_getcmdline
 -> int main() to int main(int argc, char **argv), i.e. add argc and argv
+(2) loading file put into a function, to load when drag & drop, char* mod_data passed to the function -> Run-Time Check Failure #3 - The variable 'mod_data' is being used without being initialized -> solution: initialize mod_data : char *mod_data = NULL;
