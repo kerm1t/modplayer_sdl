@@ -124,8 +124,8 @@ int main(int argc, char **argv)
     // We create a renderer with hardware acceleration, we also present according with the vertical sync refresh.
     SDL_Renderer *rndr = SDL_CreateRenderer(window, 0, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-    const int pointLocationx = windowWidth / 2;
-    const int pointLocationy = windowHeight / 2;
+//    const int pointLocationx = windowWidth / 2;
+//    const int pointLocationy = windowHeight / 2;
 
     bool quit = false;
     SDL_Event event;
@@ -153,9 +153,29 @@ int main(int argc, char **argv)
 //        fflush(stdout);
 //        SDL_Delay(500);
 
+        char* dropped_filedir; 
+
         while (SDL_PollEvent(&event)) {
-          if (event.type == SDL_QUIT) {
-            quit = true;
+          switch (event.type) {
+
+            case (SDL_QUIT): {
+              quit = true;
+              break;
+            }
+
+            case (SDL_DROPFILE): {      // https://wiki.libsdl.org/SDL_DropEvent
+              dropped_filedir = event.drop.file;
+              // Shows directory of dropped file
+              SDL_ShowSimpleMessageBox(
+                SDL_MESSAGEBOX_INFORMATION,
+                "File dropped on window",
+                dropped_filedir,
+                window
+              );
+              SDL_free(dropped_filedir);    // Free dropped_filedir memory
+              SDL_PauseAudioDevice(device, 1);
+              break;
+            }
           }
         }
 

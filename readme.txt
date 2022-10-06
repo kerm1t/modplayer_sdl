@@ -17,10 +17,14 @@ cd build
 cmake .. -A x64
 cmake --build .
 
+features:
+- text output
+
 - create an SDL window, instead of the GDI
  ... this went pretty smooth, had this after a couple of minutes
  // https://stackoverflow.com/questions/49539717/how-to-render-a-point-in-sdl2
 - nettes SDL drawing tut: https://thenumb.at/cpp-course/sdl2/04/04.html
+- for text output I was thinking of using ttf (nice tutorial here: https://thenumb.at/cpp-course/sdl2/07/07.html), then quickly decided for a bmp-font look solution
 
 
 2do:
@@ -33,6 +37,8 @@ cmake --build .
 - tonhoehe, um (a) boxen zu faerben (b) spectrum analyzer zu zeichnen
 - play a sample, e.g. when hitting keys 1-10
 - stop playback, e.g. upon LMB click
+- 4 scopes: gradient bars // https://discourse.libsdl.org/t/sdl2-color-gradient/25408
+- improve visualization of sample being played, i.e. use either channel or pattern? // https://wiki.multimedia.cx/index.php/Protracker_Module
 
 problems
 --------
