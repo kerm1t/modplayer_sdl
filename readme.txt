@@ -19,6 +19,7 @@ cmake --build .
 
 features:
 - text output
+- drag & drop mod files to be played
 
 - create an SDL window, instead of the GDI
  ... this went pretty smooth, had this after a couple of minutes

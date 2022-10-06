@@ -12,6 +12,8 @@
 #include "pocketmod.h"
 
 #include "text.h"
+#include <algorithm> // transform()
+#include <cctype>  // tolower()
 
 #define MAX_LOADSTRING 100
 #define STR_ENDS_WITH(S, E) (strcmp(S + strlen(S) - (sizeof(E)-1), E) == 0)
@@ -61,7 +63,7 @@ int load_mod(const char* modfile, const SDL_AudioSpec& format, char *mod_data, s
     printf("error: '%s' is not a valid MOD file\n", modfile);
     return -1;
   }
-
+  return 0;
 }
 
 int main(int argc, char **argv)
@@ -164,9 +166,11 @@ int main(int argc, char **argv)
             }
 
             case (SDL_DROPFILE): {      // https://wiki.libsdl.org/SDL_DropEvent
-              char* dropped_filedir;
+              std::string dropped_filedir;
               dropped_filedir = event.drop.file;
-              modfile = dropped_filedir;
+              transform(dropped_filedir.begin(), dropped_filedir.end(), dropped_filedir.begin(), std::tolower);
+              if (!STR_ENDS_WITH(dropped_filedir.c_str(), ".mod"))  break;
+              modfile = (char*)dropped_filedir.c_str();
 
               SDL_PauseAudioDevice(device, 1);
               SDL_free(mod_data);
@@ -174,7 +178,7 @@ int main(int argc, char **argv)
               SDL_PauseAudioDevice(device, 0);
               start_time = SDL_GetTicks();
 
-              SDL_free(dropped_filedir);    // Free dropped_filedir memory
+// ? not anymore with string instead of char* ?             SDL_free(dropped_filedir);    // Free dropped_filedir memory
               break;
             }
           }
