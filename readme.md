@@ -1,34 +1,29 @@
 10/3/2022
 Dt.Einheit, Talia+Wolli
 
+![10-7-2022_modplayer_sdl](https://user-images.githubusercontent.com/26294323/194484847-866a70c7-48bd-4545-a7bf-020fdf51d8f3.png)
 
 project Mod player
 ------------------
 well, using pocketmod, which is a 1 header library.
 an example with SDL2 is given
 
-
 - pocketmod - https://github.com/rombankzero/pocketmod
 - SDL - https://github.com/libsdl-org/SDL/releases/tag/release-2.24.0
 
 How to build
+```
 mkdir build
 cd build
 cmake .. -A x64
 cmake --build .
+```
 
-features:
+### features
 - text output
 - drag & drop mod files to be played
 
-- create an SDL window, instead of the GDI
- ... this went pretty smooth, had this after a couple of minutes
- // https://stackoverflow.com/questions/49539717/how-to-render-a-point-in-sdl2
-- nettes SDL drawing tut: https://thenumb.at/cpp-course/sdl2/04/04.html
-- for text output I was thinking of using ttf (nice tutorial here: https://thenumb.at/cpp-course/sdl2/07/07.html), then quickly decided for a bmp-font look solution
-
-
-2do:
+### 2do
 - 4 scopes like in fasttrackerII // https://github.com/8bitbubsy/ft2-clone/blob/master/src/scopes/ft2_scopes.c
 + graphics output via (a) GDI or >>> (b) SDL <<<
 + drag & drop mod files onto window
@@ -43,8 +38,19 @@ features:
 - add first .mod to source code (SDL -> write to .hpp file)
 - extract samlpe and visualize // google: "wav file visualisieren"
 
+### devbla
+- create an SDL window, instead of the GDI
+ ... this went pretty smooth, had this after a couple of minutes
+ // https://stackoverflow.com/questions/49539717/how-to-render-a-point-in-sdl2
+- nettes SDL drawing tut: https://thenumb.at/cpp-course/sdl2/04/04.html
+- for text output I was thinking of using ttf (nice tutorial here: https://thenumb.at/cpp-course/sdl2/07/07.html), then quickly decided for a bmp-font look solution
+
 problems
 --------
+```
 (1) error LNK2019: unresolved external symbol SDL_main referenced in function main_getcmdline
 -> int main() to int main(int argc, char **argv), i.e. add argc and argv
-(2) loading file put into a function, to load when drag & drop, char* mod_data passed to the function -> Run-Time Check Failure #3 - The variable 'mod_data' is being used without being initialized -> solution: initialize mod_data : char *mod_data = NULL;
+(2) loading file put into a function, to load when drag & drop, char* mod_data passed to the function
+-> Run-Time Check Failure #3 - The variable 'mod_data' is being used without being initialized
+-> solution: initialize mod_data : char *mod_data = NULL;
+```
