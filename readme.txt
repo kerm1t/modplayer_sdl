@@ -29,7 +29,7 @@ features:
 
 
 2do:
-- 4 scopes like in fasttrackerII
+- 4 scopes like in fasttrackerII // https://github.com/8bitbubsy/ft2-clone/blob/master/src/scopes/ft2_scopes.c
 + graphics output via (a) GDI or >>> (b) SDL <<<
 + drag & drop mod files onto window
 - merge text.cpp and .h into single header file
@@ -40,6 +40,8 @@ features:
 - stop playback, e.g. upon LMB click
 - 4 scopes: gradient bars // https://discourse.libsdl.org/t/sdl2-color-gradient/25408
 - improve visualization of sample being played, i.e. use either channel or pattern? // https://wiki.multimedia.cx/index.php/Protracker_Module
+- add first .mod to source code (SDL -> write to .hpp file)
+- extract samlpe and visualize // google: "wav file visualisieren"
 
 problems
 --------
